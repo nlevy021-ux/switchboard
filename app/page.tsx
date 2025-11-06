@@ -452,7 +452,6 @@ export default function Home() {
           {workflows.length > 0 && (
             <WorkflowSuggestions 
               workflows={workflows} 
-              prompt={prompt}
               onAddStep={handleAddWorkflowStep}
             />
           )}

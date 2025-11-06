@@ -10,7 +10,7 @@ import { suggestWorkflows } from "@/lib/workflows";
 import { buildDeepLink } from "@/lib/links";
 import type { Tool } from "@/lib/types";
 
-import type { Step, TaskStep } from "@/lib/types";
+import type { TaskStep } from "@/lib/types";
 
 type Tab = "overview" | "steps" | "notes";
 
@@ -297,7 +297,7 @@ export default function ProjectDetail() {
           {plannedSteps.length === 0 ? (
             <div className="text-center py-12 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900">
               <div className="text-lg mb-2">No planned steps</div>
-              <div className="text-sm">Go to Overview and click "Add All Steps" to plan your workflow</div>
+              <div className="text-sm">Go to Overview and click &quot;Add All Steps&quot; to plan your workflow</div>
             </div>
           ) : (
             plannedSteps.map((step, idx) => (

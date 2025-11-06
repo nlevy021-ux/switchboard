@@ -8,11 +8,10 @@ import type { Tool } from "@/lib/types";
 
 type WorkflowSuggestionsProps = {
   workflows: Workflow[];
-  prompt: string;
   onAddStep: (tool: Tool, promptText: string, workflowId?: string) => void;
 };
 
-export default function WorkflowSuggestions({ workflows, prompt, onAddStep }: WorkflowSuggestionsProps) {
+export default function WorkflowSuggestions({ workflows, onAddStep }: WorkflowSuggestionsProps) {
   const [expandedWorkflow, setExpandedWorkflow] = useState<string | null>(null);
 
   if (workflows.length === 0) {
@@ -39,7 +38,7 @@ export default function WorkflowSuggestions({ workflows, prompt, onAddStep }: Wo
       <div className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
         Thorough Path:
       </div>
-      {workflows.map((workflow, idx) => {
+      {workflows.map((workflow) => {
         const isExpanded = expandedWorkflow === workflow.id;
         const firstStep = workflow.steps[0];
         const firstLink = firstStep ? getWorkflowLink(firstStep) : null;
@@ -77,7 +76,6 @@ export default function WorkflowSuggestions({ workflows, prompt, onAddStep }: Wo
             {isExpanded && workflow.steps.length > 1 && (
               <div className="mt-3 space-y-2 pl-4 border-l-2 border-blue-200 dark:border-blue-700">
                 {workflow.steps.map((step, stepIdx) => {
-                  const stepLink = getWorkflowLink(step);
                   return (
                     <div key={step.id || stepIdx} className="py-2">
                       <div className="flex items-start gap-2">

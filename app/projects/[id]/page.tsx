@@ -280,7 +280,7 @@ export default function ProjectDetail() {
                   return (
                     <div key={step.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800">
                       <div className="text-sm text-gray-900 dark:text-gray-100">
-                        {step.type}: {step.payload?.prompt || "Step"}
+                        {step.type}: {typeof step.payload?.prompt === "string" ? step.payload.prompt : "Step"}
                       </div>
                     </div>
                   );

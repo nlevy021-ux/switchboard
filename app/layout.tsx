@@ -47,7 +47,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <header className="w-full border-b-2 border-blue-500/30 relative overflow-hidden" style={{ backgroundColor: '#0a0a06', marginLeft: 0, marginRight: 0, paddingLeft: 0, paddingRight: 0 }}>
+        <header className="w-full border-b-2 border-blue-500/30 relative overflow-hidden" style={{ backgroundColor: '#0a0a06' }}>
           {/* Subtle circuit board pattern */}
           <div className="absolute inset-0 opacity-5" style={{
             backgroundImage: `

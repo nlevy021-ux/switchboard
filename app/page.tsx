@@ -1,7 +1,7 @@
 // app/page.tsx
 "use client";
 
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useSB } from "@/lib/store";
 import type { Tool } from "@/lib/types";
@@ -15,6 +15,11 @@ import {
   trackDeepLinkClick,
   trackWorkflowStepAdded,
 } from "@/lib/analytics";
+import { CardSkeleton, InputSkeleton } from "@/components/LoadingSkeleton";
+import { Spinner } from "@/components/Spinner";
+import Modal from "@/components/Modal";
+import ToolComparison from "@/components/ToolComparison";
+import InteractiveTooltip from "@/components/InteractiveTooltip";
 
 // 1) Title generator - improved to create better project names
 function generateProjectTitle(text: string) {
@@ -79,6 +84,12 @@ export default function Home() {
 
   // save-feedback banner
   const [justSaved, setJustSaved] = useState<null | { projectId: string; title: string }>(null);
+
+  // Modal state
+  const [showToolComparison, setShowToolComparison] = useState(false);
+
+  // Weather/time data for contextual suggestions
+  const [timeSuggestion, setTimeSuggestion] = useState<string | null>(null);
 
   // store
   const {
@@ -284,13 +295,29 @@ export default function Home() {
 
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-      <div className="mb-8">
+      <div className="mb-8 animate-in fade-in">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 text-white">
           Welcome to Switchboard
         </h1>
-        <p className="text-blue-100 text-sm sm:text-base md:text-lg">
+        <p className="text-blue-100 text-sm sm:text-base md:text-lg mb-2">
           Find the perfect AI tool for your task
         </p>
+        {timeSuggestion && (
+          <InteractiveTooltip
+            content={
+              <div>
+                <div className="font-semibold mb-1">Time-Based Suggestion</div>
+                <div className="text-xs text-gray-300">
+                  We've personalized this suggestion based on the time of day
+                </div>
+              </div>
+            }
+          >
+            <p className="text-blue-200 text-xs sm:text-sm italic animate-in fade-in stagger-1">
+              💡 {timeSuggestion}
+            </p>
+          </InteractiveTooltip>
+        )}
       </div>
 
       <div className="mb-6 p-4 sm:p-5 bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
@@ -321,24 +348,37 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="p-4 sm:p-5 bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+      <div className="p-4 sm:p-5 bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow backdrop-blur-sm bg-white/95 dark:bg-gray-800/95">
         <div className="flex flex-col sm:flex-row gap-3">
         <input
             className="flex-1 border-2 border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 sm:py-4 text-base sm:text-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && onRoute()}
+          onKeyDown={(e) => e.key === "Enter" && !loading && onRoute()}
           placeholder="Describe what you need…"
+          disabled={loading}
+          aria-label="Describe what you need"
+          aria-describedby="prompt-description"
         />
           <button 
-            className="border-2 border-blue-600 dark:border-blue-500 rounded-lg px-6 sm:px-8 py-3 sm:py-4 bg-blue-600 dark:bg-blue-500 text-white font-semibold text-base sm:text-lg hover:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-blue-600 shadow-md hover:shadow-lg transition-all whitespace-nowrap" 
+            className="border-2 border-blue-600 dark:border-blue-500 rounded-lg px-6 sm:px-8 py-3 sm:py-4 bg-blue-600 dark:bg-blue-500 text-white font-semibold text-base sm:text-lg hover:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-blue-600 shadow-md hover:shadow-lg transition-all whitespace-nowrap flex items-center justify-center gap-2" 
             onClick={onRoute} 
-            disabled={loading}
+            disabled={loading || !prompt.trim()}
+            aria-label="Route to AI tool"
           >
-          {loading ? "Routing…" : "Route"}
+          {loading ? (
+            <>
+              <Spinner size="sm" />
+              <span>Routing…</span>
+            </>
+          ) : (
+            "Route"
+          )}
         </button>
         </div>
       </div>
+
+      {loading && <CardSkeleton />}
 
       {err && (
         <div className="mt-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-sm text-red-700 dark:text-red-400">
@@ -378,21 +418,48 @@ export default function Home() {
       )}
 
       {card && (
-        <div className="mt-6 border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-lg">
+        <div className="mt-6 border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-lg backdrop-blur-sm bg-white/95 dark:bg-gray-800/95 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">
-                Tool Suggestion
-              </div>
-              <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                {card.tool.toUpperCase()}
-              </div>
+              <InteractiveTooltip
+                content={
+                  <div>
+                    <div className="font-semibold mb-1">Tool Suggestion</div>
+                    <div className="text-xs text-gray-300">
+                      Based on your prompt, we recommend using {card.tool.toUpperCase()}
+                    </div>
+                    <div className="text-xs text-gray-300 mt-1">
+                      Confidence: {Math.round(card.confidence * 100)}%
+                    </div>
+                  </div>
+                }
+              >
+                <div>
+                  <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">
+                    Tool Suggestion
+                  </div>
+                  <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    {card.tool.toUpperCase()}
+                  </div>
+                </div>
+              </InteractiveTooltip>
             </div>
-            <div className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-              <div className="text-sm font-semibold text-blue-700 dark:text-blue-300">
-                {Math.round(card.confidence * 100)}% confidence
+            <InteractiveTooltip
+              content={
+                <div>
+                  <div className="font-semibold mb-1">Confidence Score</div>
+                  <div className="text-xs text-gray-300">
+                    This indicates how well {card.tool.toUpperCase()} matches your request
+                  </div>
+                </div>
+              }
+            >
+              <div className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-full cursor-help">
+                <div className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                  {Math.round(card.confidence * 100)}% confidence
+                </div>
               </div>
-            </div>
+            </InteractiveTooltip>
           </div>
 
           {card.openUrl && card.openLabel && (
@@ -409,23 +476,42 @@ export default function Home() {
 
           {card.alternatives?.length > 0 && (
             <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Try an alternative:
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Try an alternative:
+                </div>
+                <button
+                  onClick={() => setShowToolComparison(true)}
+                  className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium underline"
+                >
+                  Compare all tools
+                </button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {card.alternatives.map((alt) => {
                   const link = buildDeepLink(alt, prompt);
                   return (
-                    <a
+                    <InteractiveTooltip
                       key={alt}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => trackDeepLinkClick(alt, link.url)}
-                      className="text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-blue-400 dark:hover:border-blue-500 font-medium transition-all"
+                      content={
+                        <div>
+                          <div className="font-semibold mb-1">{alt.toUpperCase()}</div>
+                          <div className="text-xs text-gray-300">
+                            Click to open this tool with your prompt
+                          </div>
+                        </div>
+                      }
                     >
-                      {link.label}
-                    </a>
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => trackDeepLinkClick(alt, link.url)}
+                        className="text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-blue-400 dark:hover:border-blue-500 font-medium transition-all"
+                      >
+                        {link.label}
+                      </a>
+                    </InteractiveTooltip>
                   );
                 })}
               </div>
@@ -436,15 +522,24 @@ export default function Home() {
             <button 
               className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-sm bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-500 font-medium" 
               onClick={onSave}
+              aria-label="Save tool suggestion to project"
             >
               Save to Project
             </button>
             <button
-              className="border border-purple-600 dark:border-purple-500 rounded-lg px-4 py-2 text-sm bg-purple-600 dark:bg-purple-500 text-white font-medium hover:bg-purple-700 dark:hover:bg-purple-600 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-purple-600"
+              className="border border-purple-600 dark:border-purple-500 rounded-lg px-4 py-2 text-sm bg-purple-600 dark:bg-purple-500 text-white font-medium hover:bg-purple-700 dark:hover:bg-purple-600 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-purple-600 flex items-center justify-center gap-2"
               onClick={onRunAndSave}
               disabled={running}
+              aria-label="Run prompt with OpenRouter and save output"
             >
-              {running ? "Running…" : "Run & Save (OpenRouter)"}
+              {running ? (
+                <>
+                  <Spinner size="sm" />
+                  <span>Running…</span>
+                </>
+              ) : (
+                "Run & Save (OpenRouter)"
+              )}
             </button>
           </div>
 
@@ -468,6 +563,13 @@ export default function Home() {
             </details>
           )}
         </div>
+      )}
+
+      {showToolComparison && card && (
+        <ToolComparison
+          tools={[card.tool, ...(card.alternatives || [])]}
+          onClose={() => setShowToolComparison(false)}
+        />
       )}
     </main>
   );

@@ -46,7 +46,7 @@ export default function WorkflowSuggestions({ workflows, onAddStep }: WorkflowSu
         return (
           <div
             key={workflow.id}
-            className="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 transition-all"
+            className="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 transition-all card-hover backdrop-blur-sm bg-white/95 dark:bg-gray-800/95 animate-in fade-in stagger-1"
           >
             <div className="flex items-start justify-between mb-2">
               <div className="flex-1">
@@ -74,7 +74,7 @@ export default function WorkflowSuggestions({ workflows, onAddStep }: WorkflowSu
             )}
 
             {isExpanded && workflow.steps.length > 1 && (
-              <div className="mt-3 space-y-2 pl-4 border-l-2 border-blue-200 dark:border-blue-700">
+              <div className="mt-3 space-y-2 pl-4 border-l-2 border-blue-200 dark:border-blue-700 animate-in slide-in-from-top">
                 {workflow.steps.map((step, stepIdx) => {
                   return (
                     <div key={step.id || stepIdx} className="py-2">

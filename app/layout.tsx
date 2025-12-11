@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
+import WeatherTimeWidget from "@/components/WeatherTimeWidget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -101,6 +102,9 @@ export default function RootLayout({
                     {/* Connection line on hover */}
                     <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-blue-500 group-hover:w-full transition-all duration-300"></span>
                   </Link>
+                </div>
+                <div className="hidden sm:block">
+                  <WeatherTimeWidget />
                 </div>
                 {/* Status indicator dots - interactive */}
                 <div className="hidden sm:flex items-center gap-2 ml-4 pl-4 border-l border-gray-700">

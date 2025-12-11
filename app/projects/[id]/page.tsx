@@ -143,10 +143,10 @@ export default function ProjectDetail() {
         </Link>
       </div>
 
-      <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+      <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 animate-in fade-in">
         {project.title}
       </h1>
-      <div className="text-sm text-gray-500 dark:text-gray-400 mb-6">Last updated: {lastUpdated}</div>
+      <div className="text-sm text-gray-500 dark:text-gray-400 mb-6 animate-in fade-in stagger-1">Last updated: {lastUpdated}</div>
 
       {/* Tabs */}
       <div className="mb-6 border-b border-gray-200 dark:border-gray-700">
@@ -189,7 +189,7 @@ export default function ProjectDetail() {
         <div className="space-y-6">
           {/* Tool Suggestion */}
           {toolSuggestion && (
-            <div className="border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm">
+            <div className="border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm backdrop-blur-sm bg-white/95 dark:bg-gray-800/95 animate-in fade-in slide-in-from-bottom-4 card-hover">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">
@@ -220,7 +220,7 @@ export default function ProjectDetail() {
 
           {/* Thorough Path */}
           {thoroughWorkflow && (
-            <div className="border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm">
+            <div className="border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm backdrop-blur-sm bg-white/95 dark:bg-gray-800/95 animate-in fade-in slide-in-from-bottom-4 stagger-2 card-hover">
               <div className="mb-4">
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">

@@ -13,7 +13,7 @@ export default function TimelineCard({ step }: { step: Step }) {
   const p = step.payload ?? {};
 
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all card-hover backdrop-blur-sm bg-white/95 dark:bg-gray-800/95 animate-in fade-in">
       {/* Top row: timestamp • type + tool badge */}
       <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-3">
         <div className="font-medium">

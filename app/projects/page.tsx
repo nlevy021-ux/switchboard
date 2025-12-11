@@ -77,7 +77,7 @@ export default function ProjectsPage() {
           const isEditing = editingId === p.id;
 
           return (
-            <li key={p.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow">
+            <li key={p.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all card-hover backdrop-blur-sm bg-white/95 dark:bg-gray-800/95 animate-in fade-in">
               <div className="flex items-center justify-between gap-4">
                 <div className="min-w-0 flex-1">
                   {isEditing ? (

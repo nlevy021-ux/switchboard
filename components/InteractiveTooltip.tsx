@@ -20,7 +20,7 @@ export default function InteractiveTooltip({
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const triggerRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const updatePosition = () => {
     if (!triggerRef.current || !tooltipRef.current) return;
@@ -90,6 +90,7 @@ export default function InteractiveTooltip({
       window.removeEventListener("scroll", updatePosition);
       window.removeEventListener("resize", updatePosition);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
 
   return (

@@ -1,7 +1,7 @@
 // app/page.tsx
 "use client";
 
-import { useCallback, useState, useMemo, useEffect } from "react";
+import { useCallback, useState, useMemo } from "react";
 import Link from "next/link";
 import { useSB } from "@/lib/store";
 import type { Tool } from "@/lib/types";
@@ -15,9 +15,8 @@ import {
   trackDeepLinkClick,
   trackWorkflowStepAdded,
 } from "@/lib/analytics";
-import { CardSkeleton, InputSkeleton } from "@/components/LoadingSkeleton";
+import { CardSkeleton } from "@/components/LoadingSkeleton";
 import { Spinner } from "@/components/Spinner";
-import Modal from "@/components/Modal";
 import ToolComparison from "@/components/ToolComparison";
 import InteractiveTooltip from "@/components/InteractiveTooltip";
 
@@ -89,7 +88,7 @@ export default function Home() {
   const [showToolComparison, setShowToolComparison] = useState(false);
 
   // Weather/time data for contextual suggestions
-  const [timeSuggestion, setTimeSuggestion] = useState<string | null>(null);
+  const [timeSuggestion] = useState<string | null>(null);
 
   // store
   const {
@@ -308,7 +307,7 @@ export default function Home() {
               <div>
                 <div className="font-semibold mb-1">Time-Based Suggestion</div>
                 <div className="text-xs text-gray-300">
-                  We've personalized this suggestion based on the time of day
+                  We&apos;ve personalized this suggestion based on the time of day
                 </div>
               </div>
             }

@@ -11,27 +11,8 @@ type TimeAPIResponse = {
   week_number: number;
 };
 
-type WeatherAPIResponse = {
-  location: {
-    name: string;
-    region: string;
-    country: string;
-  };
-  current: {
-    temp_c: number;
-    temp_f: number;
-    condition: {
-      text: string;
-      icon: string;
-    };
-  };
-};
-
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    // Get user's approximate location from IP (or use default)
-    const forwarded = req.headers.get("x-forwarded-for");
-    const ip = forwarded ? forwarded.split(",")[0] : req.headers.get("x-real-ip") || "auto:ip";
 
     // Use WorldTimeAPI (free, no API key needed) for time
     // Using a default timezone - in production, you'd detect from IP
@@ -69,7 +50,7 @@ export async function GET(req: Request) {
           icon: weather.current_condition?.[0]?.weatherCode || null,
         };
       }
-    } catch (weatherError) {
+    } catch {
       // Weather is optional, continue without it
       console.log("Weather API failed, continuing without weather data");
     }
